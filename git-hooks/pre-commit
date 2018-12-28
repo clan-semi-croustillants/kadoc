@@ -1,0 +1,22 @@
+#!/bin/sh
+
+CURRENT_FOLDER=`readlink -f "${BASH_SOURCE[0]}" 2> /dev/null||echo $0`
+DIR=`dirname "${CURRENT_FOLDER}"`
+. "$DIR/run_test"
+
+ERRORS_COUNT=0
+
+echo "
+$(tput setaf 3)Running Git Hooks (pre-commit)$(tput sgr0)
+";
+
+run_test PHP-CS-Fixer docker-compose exec -T php-fpm vendor/bin/php-cs-fixer fix --config=.php_cs --dry-run 2> /dev/null
+run_test 'PHP-CS-Fixer Tests' docker-compose exec -T php-fpm vendor/bin/php-cs-fixer fix --config=.php_cs.spec --dry-run 2> /dev/null
+run_test PHPStan docker-compose exec -T php-fpm vendor/bin/phpstan analyse src --level=7 --no-progress --memory-limit=-1 2> /dev/null
+run_test phpspec docker-compose exec -T php-fpm vendor/bin/phpspec run
+
+if [ $ERRORS_COUNT -ne 0 ]; then
+    tput setaf 1; echo 'Some problems have been failed. Fix it and commit again.'; tput sgr0;
+fi
+
+exit $ERRORS_COUNT

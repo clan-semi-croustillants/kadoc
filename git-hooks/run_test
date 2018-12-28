@@ -1,0 +1,21 @@
+#!/bin/sh
+
+run_test()
+{
+  NAME=$1
+  shift;
+  echo '----------------------------------------------------------------------';
+  printf "⌛ Running %s…" "$NAME";
+  OUT=`$@`
+  CODE=$?
+  if [ $CODE -ne 0 ]; then
+      tput setaf 1; echo -e '\r✗ '$NAME'         '; tput sgr0;
+      echo "$OUT"
+
+      ERRORS_COUNT=$(($ERRORS_COUNT+1))
+  else
+      tput setaf 2; echo -e '\r✓ '$NAME'         '; tput sgr0;
+  fi
+  echo '----------------------------------------------------------------------';
+  echo -e "\v"
+}

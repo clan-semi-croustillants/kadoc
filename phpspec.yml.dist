@@ -1,0 +1,7 @@
+suites:
+    kadoc_suite:
+        namespace: Kadoc
+        psr4_prefix: Kadoc
+        spec_prefix: 'Spec'
+        src_path: 'src/Kadoc'
+        spec_path: 'test'

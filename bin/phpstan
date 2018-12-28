@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -exuo pipefail
+
+docker-compose exec php-fpm vendor/bin/phpstan $@

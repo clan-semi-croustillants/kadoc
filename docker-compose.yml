@@ -1,0 +1,42 @@
+version: "3.1"
+services:
+
+    postgres:
+      image: postgres:9.6-alpine
+      working_dir: /www-data
+      volumes:
+        - .:/www-data
+      environment:
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=root
+        - POSTGRES_DB=
+      ports:
+       - "5432:5432"
+
+    webserver:
+      build: docker/apache2
+      ports:
+          - "8000:80"
+      volumes:
+        - ./public:/www-data/public
+
+    php-fpm:
+      build: docker/php-fpm
+      working_dir: /www-data
+      volumes:
+          - .:/www-data
+      env_file:
+          - ./docker/xdebug.env
+
+    php-cli:
+      build: docker/php-cli
+      working_dir: /www-data
+      volumes:
+          - .:/www-data
+      env_file:
+          - .env
+
+    adminer:
+      image: adminer
+      ports:
+          - "8080:8080"
